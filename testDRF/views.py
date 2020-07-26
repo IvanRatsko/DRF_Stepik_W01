@@ -67,8 +67,6 @@ def recipients_detail(request, pk):
             shortdata = {}
         recipients = shortdatalist
 
-
-
         result = next(recipient_item for index, recipient_item in enumerate(recipients) if index + 1 == pk)
 
         if result:
@@ -82,6 +80,8 @@ def recipients_detail(request, pk):
 @api_view(http_method_names=['GET'])
 def product_sets_list(request):
     result = []
+    shortdata = {}
+    shortdatalist = []
     try:
         response = requests.get(url=product_sets_url, timeout=5)
     except requests.exceptions.Timeout as ex:
@@ -94,6 +94,15 @@ def product_sets_list(request):
     try:
         product_sets = response.json()
 
+        for item in product_sets:
+            shortdata.update({'title': item['name']})
+            shortdata.update({'description': item['about']})
+            shortdata.update({'price': item['price']})
+            shortdata.update({'weight': item['weight_grams']})
+            shortdatalist.append(shortdata)
+            shortdata = {}
+        product_sets = shortdatalist
+
         if request.query_params:
             min_price = request.query_params.get('min_price')
             min_weight = request.query_params.get('min_weight')
@@ -103,7 +112,7 @@ def product_sets_list(request):
                         result.append(product_set)
             elif min_weight:
                 for product_set in product_sets:
-                    if int(product_set['weight_grams']) >= int(min_weight):
+                    if int(product_set['weight']) >= int(min_weight):
                         result.append(product_set)
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
