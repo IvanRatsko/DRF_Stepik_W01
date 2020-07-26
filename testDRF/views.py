@@ -18,6 +18,8 @@ class MainView(TemplateView):
 
 @api_view(http_method_names=['GET'])
 def recipients_list(request):
+    shortdata = {}
+    shortdatalist = []
     try:
         responce = requests.get(url=recipients_url, timeout=5)
     except requests.exceptions.Timeout as ex:
@@ -29,6 +31,12 @@ def recipients_list(request):
 
     try:
         recipients = responce.json()
+        for item in recipients:
+            shortdata.update(item['info'])
+            shortdata.update(item['contacts'])
+            shortdatalist.append(shortdata)
+            shortdata = {}
+        recipients = shortdatalist
 
     except Exception as ex:
         logging.error(ex)
