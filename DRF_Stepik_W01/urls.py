@@ -15,6 +15,12 @@ Including another URLconf
 """
 from django.urls import include, path
 
+from views import custom_handler404
+from views import custom_handler500
+
 urlpatterns = [
     path('', include('testDRF.urls'))
 ]
+
+handler404 = custom_handler404
+handler500 = custom_handler500

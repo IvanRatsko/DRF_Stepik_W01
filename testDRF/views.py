@@ -2,12 +2,18 @@
 import logging
 
 import requests
+from django.http import HttpResponseNotFound
+from django.views.generic import TemplateView
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 recipients_url = 'https://stepik.org/media/attachments/course/73594/recipients.json'
 product_sets_url = 'https://stepik.org/media/attachments/course/73594/beautyboxes.json'
+
+
+class MainView(TemplateView):
+    template_name = 'index.html'
 
 
 @api_view(http_method_names=['GET'])
@@ -112,3 +118,11 @@ def product_sets_detail(request, pk):
     except Exception as ex:
         logging.error(ex)
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+def custom_handler404(request, exception):
+    return HttpResponseNotFound('<h1 align="center">Ошибка 404 </h1>')
+
+
+def custom_handler500(request):
+    return HttpResponseNotFound('<h1 align="center">Ошибка 500</h1>')
