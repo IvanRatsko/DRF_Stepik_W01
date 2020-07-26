@@ -29,6 +29,7 @@ def recipients_list(request):
 
     try:
         recipients = responce.json()
+
     except Exception as ex:
         logging.error(ex)
         pass
@@ -38,6 +39,8 @@ def recipients_list(request):
 
 @api_view(http_method_names=['GET'])
 def recipients_detail(request, pk):
+    shortdata = {}
+    shortdatalist = []
     try:
         response = requests.get(url=recipients_url, timeout=5)
     except requests.exceptions.Timeout as ex:
@@ -49,6 +52,15 @@ def recipients_detail(request, pk):
 
     try:
         recipients = response.json()
+        for item in recipients:
+            shortdata.update(item['info'])
+            shortdata.update(item['contacts'])
+            shortdatalist.append(shortdata)
+            shortdata = {}
+        recipients = shortdatalist
+
+
+
         result = next(recipient_item for index, recipient_item in enumerate(recipients) if index + 1 == pk)
 
         if result:
