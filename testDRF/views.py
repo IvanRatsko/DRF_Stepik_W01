@@ -106,7 +106,13 @@ def product_sets_list(request):
         if request.query_params:
             min_price = request.query_params.get('min_price')
             min_weight = request.query_params.get('min_weight')
-            if min_price:
+
+            if min_price and min_weight:
+                for product_set in product_sets:
+                    if (int(product_set['price']) >= int(min_price)) and (
+                            int(product_set['weight']) >= int(min_weight)):
+                        result.append(product_set)
+            elif min_price:
                 for product_set in product_sets:
                     if int(product_set['price']) >= int(min_price):
                         result.append(product_set)
